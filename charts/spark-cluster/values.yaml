@@ -1,0 +1,89 @@
+
+master:
+  name: spark-master
+  replicas: 1
+  container:
+    name: spark-base
+    image: kringen/spark-base:3.2.0
+    env:
+    - name: SPARK_MASTER_HOST
+      value: "spark-master"
+    - name: SPARK_TMP_DIR
+      value: "/srv/spark/tmp"
+    - name: SPARK_PID_DIR
+      value: "/srv/spark/pids"
+    - name: SPARK_LOG_DIR
+      value: "/srv/spark/logs"
+    - name: SPARK_WORKER_DIR
+      value: "/srv/spark/work"
+    - name: SPARK_LOCAL_DIRS
+      value: "/srv/spark/tmp"
+    dataVolumeMountPath: /srv/spark/data
+  claimName: azurefiles-jupyterhub-pvc
+
+persistentVolume:
+  name: jupyterhub-pv
+  spec:
+    capacity:
+      storage: 20Gi
+    accessModes:
+      - ReadWriteMany
+    storageClassName: azurefile
+    azureFile:
+      secretName: kringfiles
+      shareName: jupyterhub-shared
+      readOnly: false
+    mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - uid=1000
+    - gid=1000
+    - mfsymlinks
+    - nobrl
+
+persistentVolumeClaim:
+  name: azurefiles-jupyterhub-pvc
+  storage: 20Gi
+  storageClassName: azurefile
+  accessModes:
+    - ReadWriteMany
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

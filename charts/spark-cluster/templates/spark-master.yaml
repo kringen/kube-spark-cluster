@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.master.name }}
+  labels:
+    app: {{ .Values.master.name }}
+spec:
+  ports:
+  - port: 8080
+    name: frontend
+  - port: 7077
+    name: service
+  clusterIP: None
+  selector:
+    app: {{ .Values.master.name }}
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.master.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.master.name }} # has to match .spec.template.metadata.labels
+  serviceName: {{ .Values.master.name }}
+  replicas: {{ .Values.master.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.master.name }} # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: {{ .Values.master.container.name }}
+        image: {{ .Values.master.container.image }}
+        env:
+        {{- with .Values.master.container.env }}
+          {{ toYaml .| indent 8 }}
+        {{- end }}
+        command: ["/usr/local/spark/bin/spark-class"]
+        args: ["org.apache.spark.deploy.master.Master"]
+        ports:
+        - containerPort: 8080
+          name: frontend
+        - containerPort: 7077
+          name: service
+        volumeMounts:
+        - name: data-volume
+          mountPath: {{ .Values.master.container.dataVolumeMountPath }}
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: {{ .Values.master.claimName }}
