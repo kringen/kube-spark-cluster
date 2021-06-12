@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: {{ .Values.namespace }}
   name: {{ .Values.master.name }}
   labels:
     app: {{ .Values.master.name }}
 spec:
   ports:
-  - port: 8080
-    name: frontend
-  - port: 7077
-    name: service
+{{- with .Values.master.service.ports }}
+{{ toYaml . | indent 2 }}
+{{- end }}
   clusterIP: None
   selector:
     app: {{ .Values.master.name }}
@@ -19,6 +19,7 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  namespace: {{ .Values.namespace }}
   name: {{ .Values.master.name }}
 spec:
   selector:
@@ -34,18 +35,17 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: {{ .Values.master.container.name }}
-        image: {{ .Values.master.container.image }}
+        image: {{ printf "%s/%s:%s" .Values.master.container.imageRepository .Values.master.container.image .Values.master.container.imageVersion }}
         env:
-        {{- with .Values.master.container.env }}
-          {{ toYaml .| indent 8 }}
-        {{- end }}
+{{- with .Values.master.container.env }}
+{{ toYaml . | indent 8 }}
+{{- end }}
         command: ["/usr/local/spark/bin/spark-class"]
         args: ["org.apache.spark.deploy.master.Master"]
         ports:
-        - containerPort: 8080
-          name: frontend
-        - containerPort: 7077
-          name: service
+{{- with .Values.master.container.ports }}
+{{ toYaml . | indent 8 }}
+{{- end }}
         volumeMounts:
         - name: data-volume
           mountPath: {{ .Values.master.container.dataVolumeMountPath }}

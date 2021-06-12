@@ -1,10 +1,13 @@
+namespace: spark
 
 master:
   name: spark-master
   replicas: 1
   container:
     name: spark-base
-    image: kringen/spark-base:3.2.0
+    imageRepository: kringen
+    image: spark-base
+    imageVersion: 3.2.0
     env:
     - name: SPARK_MASTER_HOST
       value: "spark-master"
@@ -18,11 +21,64 @@ master:
       value: "/srv/spark/work"
     - name: SPARK_LOCAL_DIRS
       value: "/srv/spark/tmp"
+    ports:
+    - containerPort: 8080
+      name: frontend
+    - containerPort: 7077
+      name: service
     dataVolumeMountPath: /srv/spark/data
-  claimName: azurefiles-jupyterhub-pvc
+  claimName: azurefiles-spark-pvc
+  service:
+    ports:
+    - port: 8080
+      name: frontend
+    - port: 7077
+      name: service
+
+worker:
+  name: spark-worker
+  replicas: 5
+  container:
+    name: spark-base
+    imageRepository: kringen
+    image: spark-base
+    imageVersion: 3.2.0
+    env:
+    - name: SPARK_WORKER_CORES
+      value: "2"
+    - name: SPARK_WORKER_MEMORY
+      value: "1g"
+    - name: SPARK_TMP_DIR
+      value: "/srv/spark/tmp"
+    - name: SPARK_PID_DIR
+      value: "/srv/spark/pids"
+    - name: SPARK_LOG_DIR
+      value: "/srv/spark/logs"
+    - name: SPARK_WORKER_DIR
+      value: "/srv/spark/work"
+    - name: SPARK_LOCAL_DIRS
+      value: "/srv/spark/tmp"
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "2"
+      limits:
+        memory: "2Gi"
+        cpu: "3"
+    ports:
+    - containerPort: 8081
+      name: frontend
+    dataVolumeMountPath: /srv/spark/data
+  claimName: azurefiles-spark-pvc
+  service:
+    ports:
+    - port: 8080
+      name: frontend
+    - port: 7077
+      name: service
 
 persistentVolume:
-  name: jupyterhub-pv
+  name: spark-pv
   spec:
     capacity:
       storage: 20Gi
@@ -30,8 +86,8 @@ persistentVolume:
       - ReadWriteMany
     storageClassName: azurefile
     azureFile:
-      secretName: kringfiles
-      shareName: jupyterhub-shared
+      secretName: azurefilesecret
+      shareName: spark-shared
       readOnly: false
     mountOptions:
     - dir_mode=0777
@@ -42,7 +98,7 @@ persistentVolume:
     - nobrl
 
 persistentVolumeClaim:
-  name: azurefiles-jupyterhub-pvc
+  name: azurefiles-spark-pvc
   storage: 20Gi
   storageClassName: azurefile
   accessModes:

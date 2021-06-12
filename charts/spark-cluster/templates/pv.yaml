@@ -1,8 +1,10 @@
+{{- if .Values.persistentVolume }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ .Values.persistentVolume.name }}
 spec:
-  {{- with .Values.persistentVolume.spec }}
-    {{ toYaml .| indent 2 }}
-  {{- end }}
+{{- with .Values.persistentVolume.spec }}
+{{ toYaml .| indent 2 }}
+{{- end }}
+{{- end }}

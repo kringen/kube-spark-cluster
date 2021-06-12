@@ -1,13 +1,16 @@
+{{- if .Values.persistentVolumeClaim }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  namespace: {{ .Values.namespace }}
   name: {{ .Values.persistentVolumeClaim.name }}
 spec:
   accessModes:
-    {{- with .Values.persistentVolume.accessModes }}
+    {{- with .Values.persistentVolume.spec.accessModes }}
       {{ toYaml .| indent 4 }}
     {{- end }}
   storageClassName: {{ .Values.persistentVolumeClaim.storageClassName }}
   resources:
     requests:
       storage: {{ .Values.persistentVolumeClaim.storage }}
+{{- end }}

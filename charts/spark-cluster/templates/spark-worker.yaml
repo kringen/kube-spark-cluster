@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.worker.name }}
+  labels:
+    app: {{ .Values.worker.name }}
+spec:
+  ports:
+{{- with .Values.worker.service.ports }}
+{{ toYaml . | indent 2 }}
+{{- end }}
+  clusterIP: None
+  selector:
+    app: {{ .Values.worker.name }}
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.worker.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.worker.name }} # has to match .spec.template.metadata.labels
+  serviceName: {{ .Values.worker.name }}
+  replicas: {{ .Values.worker.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.worker.name }} # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: {{ .Values.worker.container.name }}
+        image: {{ printf "%s/%s:%s" .Values.worker.container.imageRepository .Values.worker.container.image .Values.worker.container.imageVersion }}
+        env:
+{{- with .Values.worker.container.env }}
+{{ toYaml . | indent 8 }}
+{{- end }}
+        command: ["/usr/local/spark/bin/spark-class"]
+        args: ["org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+        ports:
+{{- with .Values.worker.container.ports }}
+{{ toYaml . | indent 8 }}
+{{- end }}
+        resources:
+{{- with .Values.worker.container.resources }}
+{{ toYaml . | indent 10 }}
+{{- end }}        
+        volumeMounts:
+        - name: data-volume
+          mountPath: {{ .Values.worker.container.dataVolumeMountPath }}
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: {{ .Values.worker.claimName }}
