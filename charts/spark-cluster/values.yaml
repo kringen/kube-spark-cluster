@@ -7,7 +7,7 @@ master:
     name: spark-base
     imageRepository: kringen
     image: spark-base
-    imageVersion: 3.2.0
+    imageVersion: 3.8.0
     env:
     - name: SPARK_MASTER_HOST
       value: "spark-master"
@@ -21,6 +21,12 @@ master:
       value: "/srv/spark/work"
     - name: SPARK_LOCAL_DIRS
       value: "/srv/spark/tmp"
+    - name: SPARK_DIST_CLASSPATH
+      value: "/usr/local/hadoop/etc/hadoop/*:/usr/local/hadoop/share/hadoop/common/lib/*:/usr/local/hadoop/share/hadoop/common/*:/usr/local/hadoop/share/hadoop/hdfs/*:/usr/local/hadoop/share/hadoop/hdfs/lib/*:/usr/local/hadoop/share/hadoop/hdfs/*:/usr/local/hadoop/share/hadoop/yarn/lib/*:/usr/local/hadoop/share/hadoop/yarn/*:/usr/local/hadoop/share/hadoop/mapreduce/lib/*:/usr/local/hadoop/share/hadoop/mapreduce/*:/usr/local/hadoop/share/hadoop/tools/lib/*"
+    - name: HADOOP_HOME
+      value: "/usr/local/hadoop"
+    - name: HADOOP_CONF_DIR
+      value: "/usr/local/hadoop/etc/hadoop"
     ports:
     - containerPort: 8080
       name: frontend
@@ -42,7 +48,7 @@ worker:
     name: spark-base
     imageRepository: kringen
     image: spark-base
-    imageVersion: 3.2.0
+    imageVersion: 3.8.0
     env:
     - name: SPARK_WORKER_CORES
       value: "2"
@@ -58,6 +64,12 @@ worker:
       value: "/srv/spark/work"
     - name: SPARK_LOCAL_DIRS
       value: "/srv/spark/tmp"
+    - name: SPARK_DIST_CLASSPATH
+      value: "/usr/local/hadoop/etc/hadoop/*:/usr/local/hadoop/share/hadoop/common/lib/*:/usr/local/hadoop/share/hadoop/common/*:/usr/local/hadoop/share/hadoop/hdfs/*:/usr/local/hadoop/share/hadoop/hdfs/lib/*:/usr/local/hadoop/share/hadoop/hdfs/*:/usr/local/hadoop/share/hadoop/yarn/lib/*:/usr/local/hadoop/share/hadoop/yarn/*:/usr/local/hadoop/share/hadoop/mapreduce/lib/*:/usr/local/hadoop/share/hadoop/mapreduce/*:/usr/local/hadoop/share/hadoop/tools/lib/*"
+    - name: HADOOP_HOME
+      value: "/usr/local/hadoop"
+    - name: HADOOP_CONF_DIR
+      value: "/usr/local/hadoop/etc/hadoop"
     resources:
       requests:
         memory: "1Gi"
