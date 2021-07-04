@@ -32,3 +32,9 @@ The Spark cluster is deployed using the following command from the *kube-spark-c
 ```bash
 helm install spark-cluster ./spark-cluster
 ```
+## Cluster Dashboard
+Upon successful installation, the master node will be listening on port 8080.  This can be accessed by using kubectl port-forward comman and then opening the dashboard in a browser.
+```bash
+kubectl port-forward svc/spark-master --namespace spark 8080:8080
+```
+This command will forward traffic on http://localhost:8080 to the spark-master service.  Opening this URL in a browser (from the same machine issuing the kubectl command) should display a page like this: ![Spark Dashboard](/assets/assets/spark-dashboard-1.png)
