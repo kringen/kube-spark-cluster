@@ -27,6 +27,19 @@ worker:
     image: spark-base
     imageVersion: 3.8.0
 ```
+Resource limits are important to consider for worker nodes since Spark will not accept jobs if the correct resources (memory and CPU cores) are not available.
+
+```bash
+worker:
+  container:
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "2"
+      limits:
+        memory: "2Gi"
+        cpu: "3"
+```
 ### Deployment Command
 The Spark cluster is deployed using the following command from the *kube-spark-cluster/charts* folder:
 ```bash
@@ -38,3 +51,15 @@ Upon successful installation, the master node will be listening on port 8080.  T
 kubectl port-forward svc/spark-master --namespace spark 8080:8080
 ```
 This command will forward traffic on http://localhost:8080 to the spark-master service.  Opening this URL in a browser (from the same machine issuing the kubectl command) should display a page like this: ![Spark Dashboard](../assets/assets/spark-dashboard-1.png)
+
+## Docker Images
+### spark-base
+Both the master and worker nodes use the same image: [spark-base](docker/spark-base/Dockerfile).  This image starts with a basic python image and installs some key prerequisites such as:
+* openjdk8-jre
+* Spark
+* Hadoop (Not really a prerequisite)
+
+In addition, the image installs some libraries commonly used for working with remote storage (Azure Blob and AWS S3).
+
+### jupyter-spark
+Often times, users of Spark like to use Jupyter notebooks for an interactive development environment.  Since the notebook server acts as the "spark driver", it must use a kernel that can communicate with the cluster.  It must also contain the same version of libraries the cluster uses.  For this reason, a Dockerfile - [jupyter-spark](docker/jupyterhub/Dockerfile) - for use in JupyterHub deployments is included in this repo. A separate section has been added for implementing this image in a kubernetes installation.
