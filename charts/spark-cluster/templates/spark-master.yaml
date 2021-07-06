@@ -40,8 +40,14 @@ spec:
 {{- with .Values.master.container.env }}
 {{ toYaml . | indent 8 }}
 {{- end }}
-        command: ["/usr/local/spark/bin/spark-class"]
-        args: ["org.apache.spark.deploy.master.Master"]
+        command: 
+          {{  range .Values.master.container.command }}
+            - {{ . }}
+          {{ end }}
+        args: 
+          {{  range .Values.master.container.args }}
+            - {{ . }}
+          {{ end }}
         ports:
 {{- with .Values.master.container.ports }}
 {{ toYaml . | indent 8 }}

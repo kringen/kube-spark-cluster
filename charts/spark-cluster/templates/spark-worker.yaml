@@ -40,8 +40,14 @@ spec:
 {{- with .Values.worker.container.env }}
 {{ toYaml . | indent 8 }}
 {{- end }}
-        command: ["/usr/local/spark/bin/spark-class"]
-        args: ["org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+        command: 
+          {{  range .Values.worker.container.command }}
+            - {{ . }}
+          {{ end }}
+        args: 
+          {{  range .Values.worker.container.args }}
+            - {{ . }}
+          {{ end }}
         ports:
 {{- with .Values.worker.container.ports }}
 {{ toYaml . | indent 8 }}

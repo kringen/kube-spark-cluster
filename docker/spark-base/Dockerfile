@@ -13,11 +13,6 @@ RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SP
     rm /tmp/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz && \
     mv /tmp/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} /usr/local && \
     ln -s /usr/local/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} /usr/local/spark && \
-    wget https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION_LONG}/hadoop-${HADOOP_VERSION_LONG}.tar.gz  -O /tmp/hadoop-${HADOOP_VERSION_LONG}.tar.gz && \
-    tar -zxf /tmp/hadoop-${HADOOP_VERSION_LONG}.tar.gz -C /tmp && \
-    rm /tmp/hadoop-${HADOOP_VERSION_LONG}.tar.gz && \
-    mv /tmp/hadoop-${HADOOP_VERSION_LONG} /usr/local && \
-    ln -s /usr/local/hadoop-${HADOOP_VERSION_LONG} /usr/local/hadoop && \
     wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.4/hadoop-aws-2.7.4.jar -O /tmp/hadoop-aws-2.7.4.jar && \
     mv /tmp/hadoop-aws-2.7.4.jar /usr/local/spark/jars && \
     wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar -O /tmp/aws-java-sdk-1.7.4.jar && \
@@ -27,6 +22,7 @@ RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SP
     wget https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/8.6.6/azure-storage-8.6.6.jar -O /tmp/azure-storage-8.6.6.jar && \
     mv /tmp/azure-storage-8.6.6.jar  /usr/local/spark/jars
 
+COPY spark-defaults.conf /usr/local/spark/conf
 
 # Create the Spark working directories
 RUN mkdir -p /srv/spark && \
