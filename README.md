@@ -64,6 +64,8 @@ In addition, the image installs some libraries commonly used for working with re
 ## JupyterHub Integration
 Often times, users of Spark like to use Jupyter notebooks for an interactive development environment.  Since the notebook server acts as the "spark driver", it must use a kernel that can communicate with the cluster.  It must also contain the same version of libraries the cluster uses.  
 
+![Jupyter Launcher Menu](../assets/assets/jupyter-launcher-pyspark.png)
+
 After integration, a new *Pyspark* kernel appears on the launcher menu
 
 ### Docker Image
