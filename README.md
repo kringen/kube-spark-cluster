@@ -64,6 +64,8 @@ In addition, the image installs some libraries commonly used for working with re
 ## JupyterHub Integration
 Often times, users of Spark like to use Jupyter notebooks for an interactive development environment.  Since the notebook server acts as the "spark driver", it must use a kernel that can communicate with the cluster.  It must also contain the same version of libraries the cluster uses.  
 
+After integration, a new *Pyspark* kernel appears on the launcher menu
+
 ### Docker Image
 One of the great features of Jupyterhub is the fact that a user-specific pod spins up when a user logs in.  The image used for this pod contain the software required for interacting with the pod using a Jupyter notebook.  There are different stock images that JupyterHub can deploy.  You can also create a custom image.  Since our user pod will interact with our Spark cluster, a Dockerfile - [jupyter-spark](docker/jupyterhub/Dockerfile) - for use in JupyterHub deployments is included in this repo.
 
