@@ -56,10 +56,10 @@ spec:
 {{- with .Values.worker.container.resources }}
 {{ toYaml . | indent 10 }}
 {{- end }}        
-        volumeMounts:
-        - name: data-volume
-          mountPath: {{ .Values.worker.container.dataVolumeMountPath }}
-      volumes:
-      - name: data-volume
-        persistentVolumeClaim:
-          claimName: {{ .Values.worker.claimName }}
+        # volumeMounts:
+        # - name: data-volume
+        #   mountPath: {{ .Values.worker.container.dataVolumeMountPath }}
+      # volumes:
+      # - name: data-volume
+      #   persistentVolumeClaim:
+      #     claimName: {{ .Values.worker.claimName }}

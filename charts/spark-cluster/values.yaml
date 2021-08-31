@@ -34,7 +34,7 @@ master:
       name: frontend
     - containerPort: 7077
       name: service
-    dataVolumeMountPath: /srv/spark/data
+    # dataVolumeMountPath: /srv/spark/data
   service:
     ports:
     - port: 8080
@@ -44,7 +44,7 @@ master:
 
 worker:
   name: spark-worker
-  replicas: 5
+  replicas: 1
   container:
     name: spark-base
     imageRepository: kringen
@@ -76,14 +76,14 @@ worker:
     resources:
       requests:
         memory: "1Gi"
-        cpu: "2"
+        cpu: "1"
       limits:
         memory: "2Gi"
         cpu: "3"
     ports:
     - containerPort: 8081
       name: frontend
-    dataVolumeMountPath: /srv/spark/data
+    # dataVolumeMountPath: /srv/spark/data
   service:
     ports:
     - port: 8080
