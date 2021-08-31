@@ -35,7 +35,6 @@ master:
     - containerPort: 7077
       name: service
     dataVolumeMountPath: /srv/spark/data
-  claimName: azurefiles-spark-pvc
   service:
     ports:
     - port: 8080
@@ -85,40 +84,12 @@ worker:
     - containerPort: 8081
       name: frontend
     dataVolumeMountPath: /srv/spark/data
-  claimName: azurefiles-spark-pvc
   service:
     ports:
     - port: 8080
       name: frontend
     - port: 7077
       name: service
-
-persistentVolume:
-  name: spark-pv
-  spec:
-    capacity:
-      storage: 20Gi
-    accessModes:
-      - ReadWriteMany
-    storageClassName: azurefile
-    azureFile:
-      secretName: azurefilesecret
-      shareName: spark-shared
-      readOnly: false
-    mountOptions:
-    - dir_mode=0777
-    - file_mode=0777
-    - uid=1000
-    - gid=1000
-    - mfsymlinks
-    - nobrl
-
-persistentVolumeClaim:
-  name: azurefiles-spark-pvc
-  storage: 20Gi
-  storageClassName: azurefile
-  accessModes:
-    - ReadWriteMany
 
 serviceAccount:
   # Specifies whether a service account should be created
