@@ -129,6 +129,63 @@ kubectl port-forward svc/spark-master --namespace spark 8080:8080
 ```
 This command will forward traffic on http://localhost:8080 to the spark-master service.  Opening this URL in a browser (from the same machine issuing the kubectl command) should display a page like this: ![Spark Dashboard](../assets/assets/spark-dashboard-1.png)
 
+## Submitting a Spark Job
+Once the spark cluster is deployed we can test it using the same image that got deployed for the master and worker nodes.  To create a temporary pod that will last 1 hour you can execute the following command:
+
+```
+kubectl run spark-test -n spark --image=kringen/spark-base:3.8.1 -- /bin/sh -c "sleep 3600"
+```
+Once the pod is up and running you can connect to the bash terminal by executing the following:
+
+```
+kubectl exec -it spark-test -n spark -- /bin/sh
+```
+You should see a prompt from within the spark-test pod logged in as root.
+
+```
+/ #
+```
+ One important task to do before executing a spark job is to define the pod's IP address as its spark.driver.host by executing the following commands. This is necessary so the cluster can reach out to the pod to update job status.  If left out, the cluster nodes will try to report back to "spark-test" which is not a valid DNS service in the cluster.
+```
+echo "spark.driver.host=$(hostname -i)" > /usr/local/spark/conf/spark-defaults.conf
+
+cat /usr/local/spark/conf/spark-defaults.conf
+```
+You should see something like `spark.driver.host=xx.xx.xx.xx`
+
+To create an interactive pypark session connecting to the cluster:
+```
+/usr/local/spark/bin/pyspark --master spark://spark-master:7077
+```
+At this point you should see the pyspark terminal prompting you for input!
+```
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 3.0.0
+      /_/
+
+Using Python version 3.9.5 (default, May  4 2021 18:33:52)
+SparkSession available as 'spark'.
+>>> 
+
+```
+You can check for a spark context by entering `sc`:
+```
+>>> sc
+<SparkContext master=spark://spark-master:7077 appName=PySparkShell>
+
+```
+To test reading a text file:
+```
+>>> df=spark.read.text("/etc/hosts")
+>>> df.show()
+```
+You should see some output containing the text of /etc/hosts.  This file was chosen since it will exists on **all worker nodes**.  In order to do some real data reads you will need to make sure your source files are persisting either in shared storage or in HDFS.
+
+Once testing is complete, use `CTRL+d` to exit out of the pyspark prompt and `exit` to exit out of the test pod.
+
 ## Docker Image
 ### spark-base
 Both the master and worker nodes use the same image: [spark-base](docker/spark-base/Dockerfile).  This image starts with a basic python image and installs some key prerequisites such as:
