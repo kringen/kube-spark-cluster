@@ -34,7 +34,6 @@ master:
       name: frontend
     - containerPort: 7077
       name: service
-    # dataVolumeMountPath: /srv/spark/data
   service:
     ports:
     - port: 8080
@@ -83,7 +82,6 @@ worker:
     ports:
     - containerPort: 8081
       name: frontend
-    # dataVolumeMountPath: /srv/spark/data
   service:
     ports:
     - port: 8080

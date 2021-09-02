@@ -93,11 +93,23 @@ worker:
         memory: "2Gi"
         cpu: "3"
 ```
+
+#### Persistent Volumes
+If you want to persist volumes and mount them in the nodes, you can optionally reference these values in a separate values file.  An example file has been added that connects to [Azure Files](https://docs.microsoft.com/en-us/azure/storage/files/storage-files-introduction)) and mounts the remote share in the /srv/spark/data directory.  The benefit of this approach is that data files can be placed in the Azure Files share and all nodes will have access to read that file during processing.
+
+A prerequisite for this is to create a secret that contains the storage account name and access key.  Here is an example of how to create that secret:
+```
+kubectl create secret generic azurefilesecret -n spark \
+  --from-literal=azurestorageaccountname=<storage account name goes here> \
+  --from-literal=azurestorageaccountkey=<storage account key goes here>
+```
+Once the secret is created, you can reference it by name in [values-azure-storage.yaml](values-azure-storage.yaml).
+
 ### Deployment Command
 The Spark cluster can now be deployed by:
 
 1. Navigating to the *kube-spark-cluster/charts* folder
-2. Running `helm install spark-cluster ./spark-cluster`
+2. Running `helm install spark-cluster ./spark-cluster` or if you want to use Azure Files for shared storage, reference the additional values file: `helm install spark-cluster ./spark-cluster -f ./spark-cluster/values-azure-storage.yaml`
 
 You can test that this worked by running the command `kubectl get pods --namespace spark` and making sure the `spark-test` pod is present.
 
