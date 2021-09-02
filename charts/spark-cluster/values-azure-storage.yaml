@@ -1,8 +1,12 @@
 master:
   claimName: azurefiles-spark-pvc
+  container:
+    dataVolumeMountPath: /srv/spark/data
 
 worker:
   claimName: azurefiles-spark-pvc
+  container:
+    dataVolumeMountPath: /srv/spark/data
 
 persistentVolume:
   name: spark-pv
