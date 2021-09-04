@@ -1,6 +1,9 @@
 # Spark Cluster on Kubernetes
 This repo contains the files necessary to deploy a [Spark cluster](https://spark.apache.org/) on a basic [Kubernetes](https://kubernetes.io/) cluster.  This deployment will create 1 master node and any number of worker nodes.  Each node runs as a kubernetes pod.  This should work regardless of the kubernetes deployment.  It should work with any cloud provider or bare metal.
 
+![Deployment Diagram]("../assets/assets/Untitled Diagram.drawio.png")
+
+
 ## Installation
 ### Dependency Setup
 In order to deploy the clusters locally for testing, there are a few things that will need to be installed.  All steps in the section assume you are running on a Mac and have [Homebrew](https://brew.sh/) installed.
