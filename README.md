@@ -95,7 +95,7 @@ worker:
 ```
 
 #### Persistent Volumes
-If you want to persist volumes and mount them in the nodes, you can optionally reference these values in a separate values file.  An example file has been added that connects to [Azure Files](https://docs.microsoft.com/en-us/azure/storage/files/storage-files-introduction)) and mounts the remote share in the /srv/spark/data directory.  The benefit of this approach is that data files can be placed in the Azure Files share and all nodes will have access to read that file during processing.
+If you want to persist volumes and mount them in the nodes, you can optionally reference these values in a separate values file.  An example file has been added that connects to [Azure Files](https://docs.microsoft.com/en-us/azure/storage/files/storage-files-introduction) and mounts the remote share in the /srv/spark/data directory.  The benefit of this approach is that data files can be placed in the Azure Files share and all nodes will have access to read that file during processing.
 
 A prerequisite for this is to create a secret that contains the storage account name and access key.  Here is an example of how to create that secret:
 ```
@@ -111,16 +111,15 @@ The Spark cluster can now be deployed by:
 1. Navigating to the *kube-spark-cluster/charts* folder
 2. Running `helm install spark-cluster ./spark-cluster` or if you want to use Azure Files for shared storage, reference the additional values file: `helm install spark-cluster ./spark-cluster -f ./spark-cluster/values-azure-storage.yaml`
 
-You can test that this worked by running the command `kubectl get pods --namespace spark` and making sure the `spark-test` pod is present.
+You can test that this worked by running the command `kubectl get pods --namespace spark` and making sure the master and worker nodes are in the ready state showing `1/1`.
 
 ```
 NAME             READY   STATUS    RESTARTS   AGE
 spark-master-0   1/1     Running   0          11m
-spark-test       1/1     Running   0          20s
 spark-worker-0   1/1     Running   0          11m
 ```
 
-If you have issues during installation, you can always start over by running `helm uninstall spark-cluster`.
+If you have issues during installation, you can always start over by running `helm uninstall spark-cluster` and try again.
 
 ## Cluster Dashboard
 Upon successful installation, the master node will be listening on port 8080.  This can be accessed by using kubectl port-forward comman and then opening the dashboard in a browser.
@@ -145,7 +144,7 @@ You should see a prompt from within the spark-test pod logged in as root.
 ```
 / #
 ```
- One important task to do before executing a spark job is to define the pod's IP address as its spark.driver.host by executing the following commands. This is necessary so the cluster can reach out to the pod to update job status.  If left out, the cluster nodes will try to report back to "spark-test" which is not a valid DNS service in the cluster.
+One important task to do before executing a spark job is to define the pod's IP address as its spark.driver.host by executing the following commands. This is necessary so the cluster can reach out to the pod to update job status.  If left out, the cluster nodes will try to report back to "spark-test" which is not a valid DNS service in the cluster.
 ```
 echo "spark.driver.host=$(hostname -i)" > /usr/local/spark/conf/spark-defaults.conf
 
@@ -185,15 +184,6 @@ To test reading a text file:
 You should see some output containing the text of /etc/hosts.  This file was chosen since it will exists on **all worker nodes**.  In order to do some real data reads you will need to make sure your source files are persisting either in shared storage or in HDFS.
 
 Once testing is complete, use `CTRL+d` to exit out of the pyspark prompt and `exit` to exit out of the test pod.
-
-## Docker Image
-### spark-base
-Both the master and worker nodes use the same image: [spark-base](docker/spark-base/Dockerfile).  This image starts with a basic python image and installs some key prerequisites such as:
-* openjdk8-jre
-* Spark
-* Hadoop (Not really a prerequisite)
-
-In addition, the image installs some libraries commonly used for working with remote storage (Azure Blob and AWS S3).
 
 ## JupyterHub Integration
 Often times, users of Spark like to use Jupyter notebooks for an interactive development environment.  Since the notebook server acts as the "spark driver", it must use a kernel that can communicate with the cluster.  It must also contain the same version of libraries the cluster uses.  These instructions are adapted from the [JupyterHub documentation](https://zero-to-jupyterhub.readthedocs.io/en/latest/jupyterhub/installation.html).
@@ -241,3 +231,12 @@ AppName   pyspark-shell
 One of the great features of Jupyterhub is the fact that a user-specific pod spins up when a user logs in.  The image used for this pod contain the software required for interacting with the pod using a Jupyter notebook.  There are different stock images that JupyterHub can deploy.  You can also create a custom image.  Since our user pod will interact with our Spark cluster, a Dockerfile - [jupyter-spark](docker/jupyterhub/Dockerfile) - for use in JupyterHub deployments is included in this repo.
 
 The jupyter-spark image uses the [jupyter/datascience-notebook](https://hub.docker.com/r/jupyter/datascience-notebook/tags/?page=1&ordering=last_updated) base image.  Then openjdk-8-jdk and Spark are installed.
+
+## Docker Image
+### spark-base
+Both the master and worker nodes use the same image: [spark-base](docker/spark-base/Dockerfile).  This image starts with a basic python image and installs some key prerequisites such as:
+* openjdk8-jre
+* Spark
+* Hadoop (Not really a prerequisite)
+
+In addition, the image installs some libraries commonly used for working with remote storage (Azure Blob and AWS S3).
