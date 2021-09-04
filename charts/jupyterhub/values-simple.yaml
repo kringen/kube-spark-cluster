@@ -1,0 +1,21 @@
+hub:
+  db:
+    type: sqlite-memory
+
+singleuser:
+  defaultUrl: "/lab"
+  storage:
+    type: none
+  image:
+    name: kringen/jupyter-spark
+    tag: 1.1.2
+  lifecycleHooks:
+    postStart:
+      exec:
+        command: 
+          - "sh"
+          - "-c"
+          - >
+            echo "spark.driver.host=$(hostname -i)" > /usr/local/spark/conf/spark-defaults.conf
+
+
