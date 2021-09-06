@@ -7,7 +7,15 @@ singleuser:
   networkPolicy:
     enabled: false
   storage:
-    type: none
+    type: none # Do not persist non-shared storage
+    extraVolumes:
+    - name: jupyterhub-sharedscratch-rw
+      persistentVolumeClaim:
+        claimName: azurefiles-jupyterhub-pvc
+    extraVolumeMounts:
+    - name: jupyterhub-sharedscratch-rw
+      mountPath: /home/jovyan/shared
+      subPath: shared  
   image:
     name: kringen/jupyter-spark
     tag: 1.1.2
