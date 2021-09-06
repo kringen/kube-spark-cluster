@@ -57,6 +57,11 @@ If you are running the cluster locally, you may also need to install [hyperkit](
 
 To install it, run `brew install helm`.
 
+### Create Spark Namespace
+The first installation step is to create a namespace:
+```
+kubectl create namespace spark
+```
 
 ### Deployment Values
 Deployment variables should be updated in the [values.yaml](charts/spark-cluster/values.yaml) file.
