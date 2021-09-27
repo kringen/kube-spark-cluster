@@ -10,7 +10,7 @@ singleuser:
     type: none
   image:
     name: kringen/jupyter-spark
-    tag: 1.1.2
+    tag: 1.2.1
   lifecycleHooks:
     postStart:
       exec:
