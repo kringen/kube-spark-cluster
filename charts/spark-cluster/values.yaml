@@ -7,7 +7,7 @@ master:
     name: spark-base
     imageRepository: kringen
     image: spark-base
-    imageVersion: 3.8.1
+    imageVersion: 3.8.2
     command: ["/usr/local/spark/bin/spark-class"]
     args: ["org.apache.spark.deploy.master.Master"]
     env:
@@ -43,12 +43,12 @@ master:
 
 worker:
   name: spark-worker
-  replicas: 1
+  replicas: 5
   container:
     name: spark-base
     imageRepository: kringen
     image: spark-base
-    imageVersion: 3.8.1
+    imageVersion: 3.8.2
     command: ["/usr/local/spark/bin/spark-class"]
     args: ["org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
     env:

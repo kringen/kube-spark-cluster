@@ -22,7 +22,11 @@ RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SP
     wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/2.7.4/hadoop-azure-2.7.4.jar -O /tmp/hadoop-azure-2.7.4.jar && \
     mv /tmp/hadoop-azure-2.7.4.jar /usr/local/spark/jars && \
     wget https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/8.6.6/azure-storage-8.6.6.jar -O /tmp/azure-storage-8.6.6.jar && \
-    mv /tmp/azure-storage-8.6.6.jar  /usr/local/spark/jars
+    mv /tmp/azure-storage-8.6.6.jar  /usr/local/spark/jars && \
+    wget https://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-10_2.12/3.1.2/spark-streaming-kafka-0-10_2.12-3.1.2.jar -O /tmp/spark-streaming-kafka-0-10_2.12-3.1.2.jar && \
+    mv /tmp/spark-streaming-kafka-0-10_2.12-3.1.2.jar /usr/local/spark/jars && \
+    wget https://repo1.maven.org/maven2/com/redislabs/spark-redis_2.12/2.6.0/spark-redis_2.12-2.6.0.jar -O /tmp/spark-redis_2.12-2.6.0.jar && \
+    mv /tmp/spark-redis_2.12-2.6.0.jar /usr/local/spark/jars
 
 # Copy pyspark kernel
 COPY kernel.json /opt/conda/share/jupyter/kernels/pypsark/kernel.json

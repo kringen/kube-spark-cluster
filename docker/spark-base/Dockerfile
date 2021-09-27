@@ -20,7 +20,11 @@ RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SP
     wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/2.7.4/hadoop-azure-2.7.4.jar -O /tmp/hadoop-azure-2.7.4.jar && \
     mv /tmp/hadoop-azure-2.7.4.jar /usr/local/spark/jars && \
     wget https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/8.6.6/azure-storage-8.6.6.jar -O /tmp/azure-storage-8.6.6.jar && \
-    mv /tmp/azure-storage-8.6.6.jar  /usr/local/spark/jars
+    mv /tmp/azure-storage-8.6.6.jar  /usr/local/spark/jars && \
+    wget https://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka_2.11/1.6.3/spark-streaming-kafka_2.11-1.6.3.jar -O /tmp/spark-streaming-kafka_2.11-1.6.3.jar && \
+    mv /tmp/spark-streaming-kafka_2.11-1.6.3.jar  /usr/local/spark/jars && \
+    wget https://repo1.maven.org/maven2/com/redislabs/spark-redis_2.12/2.6.0/spark-redis_2.12-2.6.0.jar -O /tmp/spark-redis_2.12-2.6.0.jar && \
+    mv /tmp/spark-redis_2.12-2.6.0.jar /usr/local/spark/jars
 
 COPY spark-defaults.conf /usr/local/spark/conf
 

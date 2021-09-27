@@ -12,13 +12,18 @@ singleuser:
     - name: jupyterhub-sharedscratch-rw
       persistentVolumeClaim:
         claimName: azurefiles-jupyterhub-pvc
+    - name: jupyterhub-data-rw
+      persistentVolumeClaim:
+        claimName: azurefiles-spark-pvc
     extraVolumeMounts:
     - name: jupyterhub-sharedscratch-rw
       mountPath: /home/jovyan/shared
       subPath: shared  
+    - name: jupyterhub-data-rw
+      mountPath: /srv/spark/data  
   image:
     name: kringen/jupyter-spark
-    tag: 1.1.2
+    tag: 1.2.1
   lifecycleHooks:
     postStart:
       exec:
